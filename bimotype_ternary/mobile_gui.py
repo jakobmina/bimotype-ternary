@@ -37,7 +37,9 @@ def main(page: ft.Page):
         "messages": [],
         "handshake_requests": [],
         "target_fp": "",
-        "h7_seed": 42
+        "h7_seed": 42,
+        "qr_frames_b64": [],
+        "animating": False
     }
 
     # ── Peer init ─────────────────────────────────────────────────────────────
@@ -51,21 +53,25 @@ def main(page: ft.Page):
                 "sender": sender[:8],
                 "content": msg_text
             })
-            update_chat_ui()
+            page.run_task(lambda: update_chat_ui())
 
     def on_handshake(sender):
         if sender not in state["handshake_requests"]:
             state["handshake_requests"].append(sender)
-            update_handshake_ui()
+            page.run_task(lambda: update_handshake_ui())
 
-    import random
-    port = random.randint(5100, 5200)
-    state["peer"] = MetriplecticPeer(port=port)
-    state["peer"].on_message_received = on_peer_message
-    state["peer"].on_handshake_received = on_handshake
-    state["peer"].on_trust_established = lambda _: update_contacts_ui()
-    state["local_fp"] = state["peer"].start_listening(thread_callback=lambda t=None: None)
-    PeerDiscovery.register_peer(state["local_fp"], "127.0.0.1", port)
+    def init_peer_async():
+        import random
+        port = random.randint(5100, 5200)
+        state["peer"] = MetriplecticPeer(port=port)
+        state["peer"].on_message_received = on_peer_message
+        state["peer"].on_handshake_received = on_handshake
+        state["peer"].on_trust_established = lambda _: page.run_task(lambda: update_contacts_ui())
+        state["local_fp"] = state["peer"].start_listening(thread_callback=lambda t=None: None)
+        PeerDiscovery.register_peer(state["local_fp"], "127.0.0.1", port)
+        page.run_task(lambda: update_contacts_ui())
+
+    threading.Thread(target=init_peer_async, daemon=True).start()
 
     # ── Shared controls ───────────────────────────────────────────────────────
 
@@ -292,25 +298,21 @@ def main(page: ft.Page):
     qr_image_control = ft.Image(src="", width=300, height=300, fit=ft.BoxFit.CONTAIN)
     qr_counter_text  = ft.Text("0 / 0", color=ACCENT_COLOR)
 
-    animating     = False
-    qr_frames_b64 = []
-
     def animate_qr(max_loops: int = 3):
-        nonlocal animating
-        if animating or not qr_frames_b64:
+        if state["animating"] or not state["qr_frames_b64"]:
             return
-        animating  = True
+        state["animating"] = True
         idx        = 0
         loops_done = 0
-        total      = len(qr_frames_b64)
+        total      = len(state["qr_frames_b64"])
 
-        while animating and qr_frames_b64:
-            qr_image_control.src_base64 = qr_frames_b64[idx]
+        while state["animating"] and state["qr_frames_b64"]:
+            qr_image_control.src_base64 = state["qr_frames_b64"][idx]
             qr_counter_text.value = (
                 f"{idx + 1} / {total}  "
                 f"(ciclo {loops_done + 1}/{max_loops})"
             )
-            page.update()
+            page.run_task(lambda: page.update())
 
             idx += 1
             if idx >= total:          # completó un ciclo completo
@@ -322,20 +324,18 @@ def main(page: ft.Page):
             time.sleep(0.15)
 
         # Al terminar: congelar en primer frame y liberar el flag
-        animating = False
-        if qr_frames_b64:
-            qr_image_control.src_base64 = qr_frames_b64[0]
+        state["animating"] = False
+        if state["qr_frames_b64"]:
+            qr_image_control.src_base64 = state["qr_frames_b64"][0]
             qr_counter_text.value = (
                 f"✓ {total} frames  ({max_loops} ciclos completados)"
             )
-            page.update()
+            page.run_task(lambda: page.update())
 
     def stop_animating():
-        nonlocal animating
-        animating = False
+        state["animating"] = False
 
     def pick_files_result(e):
-        nonlocal qr_frames_b64
         if not e.files:
             return
         file_path = e.files[0].path
@@ -348,11 +348,11 @@ def main(page: ft.Page):
             frames   = protocol.prepare_payload(file_bytes, filename)
             images   = protocol.generate_qr_images(frames)
 
-            qr_frames_b64 = []
+            state["qr_frames_b64"] = []
             for img in images:
                 buf = io.BytesIO()
                 img.save(buf, format="PNG")
-                qr_frames_b64.append(base64.b64encode(buf.getvalue()).decode())
+                state["qr_frames_b64"].append(base64.b64encode(buf.getvalue()).decode())
 
             snack(f"Archivo dividido en {len(frames)} QRs.", ft.Colors.GREEN_700)
             threading.Thread(target=animate_qr, daemon=True).start()
@@ -454,7 +454,6 @@ def main(page: ft.Page):
     page.navigation_bar = nav_bar
 
     page.add(ft.SafeArea(ft.Column([p2p_view, qr_view], expand=True)))
-    update_contacts_ui()
 
 
 if __name__ == "__main__":
