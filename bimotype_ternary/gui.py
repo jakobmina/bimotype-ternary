@@ -37,11 +37,18 @@ st.markdown("""
     h1, h2, h3 { color: #00d4ff !important; font-family: 'Inter', sans-serif; }
     .fingerprint-box { 
         background-color: #161b22; 
-        padding: 10px; 
-        border-radius: 5px; 
+        padding: 12px; 
+        border_radius: 8px; 
         border: 1px dashed #00d4ff;
-        font-family: monospace;
+        font-family: 'JetBrains Mono', monospace;
         color: #00d4ff;
+        word-break: break-all;
+        line-height: 1.4;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -108,7 +115,13 @@ with tab1:
 
     with col1:
         st.subheader("Tu Identidad (Local)")
-        st.markdown(f'<div class="fingerprint-box" style="font-size: 10px;" size=fit.box>{st.session_state.local_fp}</div>', unsafe_allow_html=True)
+        
+        # Segmentar fingerprint para mejor visualización
+        def segment_text(text, chunk=16):
+            return "<br>".join([text[i:i+chunk] for i in range(0, len(text), chunk)])
+            
+        fp_html = segment_text(st.session_state.local_fp)
+        st.markdown(f'<div class="fingerprint-box">{fp_html}</div>', unsafe_allow_html=True)
         
         st.divider()
         

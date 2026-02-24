@@ -292,7 +292,13 @@ def main(page: ft.Page):
                         ft.Icon(ft.Icons.FINGERPRINT, color=ACCENT_COLOR, size=30),
                         ft.Column([
                             ft.Text("LOCAL IDENTITY", size=10, color=ACCENT_COLOR, weight=ft.FontWeight.BOLD),
-                            identity_text
+                            ft.Text(
+                                "\n".join([state["local_fp"][i:i+16] for i in range(0, len(state["local_fp"]), 16)]) 
+                                if state["local_fp"] else "Inicializando...",
+                                font_family="monospace", 
+                                size=11, 
+                                color=ACCENT_COLOR
+                            )
                         ], spacing=0)
                     ]),
                     ft.Divider(height=10, color=ft.Colors.with_opacity(0.1, ACCENT_COLOR)),
