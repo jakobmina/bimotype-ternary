@@ -108,7 +108,7 @@ with tab1:
 
     with col1:
         st.subheader("Tu Identidad (Local)")
-        st.markdown(f'<div class="fingerprint-box">{st.session_state.local_fp}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="fingerprint-box" style="font-size: 10px;" size=fit.box>{st.session_state.local_fp}</div>', unsafe_allow_html=True)
         
         st.divider()
         

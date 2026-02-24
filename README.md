@@ -1,8 +1,8 @@
+# BiMoType-Ternary: The Metriplectic Quantum Framework
+
 <p align="center">
   <img width="128" height="111" alt="logo" src="https://github.com/user-attachments/assets/875e9ac7-6414-44d2-a571-cf385117cff0" />
 </p>
-
-# BiMoType-Ternary: The Metriplectic Quantum Framework
 
 > **Bridging Ternary Topology, Nuclear Physics, and Secure P2P Quantum Communication**
 
@@ -93,7 +93,7 @@ You can also run listening peers or send data via command line:
 bimotype --listen
 
 # Enviar mensaje a un fingerprint específico
-bimotype --send <DEST_FINGERPRINT> --message "HELLO_H7"
+bimotype --send <DEST_FINGERPRINT> --message "Psimon_H7"
 ```
 
 ### Key Generation Demo
@@ -104,22 +104,32 @@ bimotype --crypto 42
 
 ---
 
+### 🧬 Metriplectic Console & Mobile UX
+
+BiMoType-Ternary now features a premium, physics-grounded mobile interface built with [Flet](https://flet.dev/).
+
+- **Metriplectic Monitor**: Real-time visualization of the competition between the Symplectic ($H$) and Metric ($S$) brackets, ensuring physical stability.
+- **Hardware Fingerprinting**: Identity management via secure, recursive hardware signatures.
+- **Glassmorphism Design**: High-premium dark theme with intuitive component distribution for P2P and QR transfers.
+- **Ternary Messaging**: Full support for ternary encoded (-1, 0, +1) packets via secure channels.
+
+---
+
 ## 🏗️ Project Structure
 
 ```text
 bimotype-ternary/
-├── bimotype_ternary/     # Nucleo de la Librería
+├── bimotype_ternary/     # Core Library
 │   ├── core/             # 🧠 Session & Recursive Engines
-│   ├── crypto/           # 🔐 Criptografía & Handshaking
-│   ├── database/         # 🗄️ Persistencia SQLite & Modelos
-│   ├── network/          # 📡 P2P, Discovery & Handshake Protocol
-│   ├── physics/          # ⚛️ Dinámica Metriplética
-│   └── topology/         # 🌀 Codificación Ternaria & H7
-├── bimotype_ternary/     # Nucleo de la Librería
-│   ├── ...
-│   ├── gui.py            # 🧬 Streamlit Dashboard
-│   └── main.py           # 🚀 Entry Point Unificado (CLI)
-└── tests/                # 🧪 Suite de Pruebas (Seguridad & P2P)
+│   ├── crypto/           # 🔐 Cryptography & QR Offline Transfer
+│   ├── database/         # 🗄️ SQLite Persistence & Models
+│   ├── network/          # 📡 P2P, Discovery & Handshake
+│   ├── physics/          # ⚛️ Metriplectic Dynamics
+│   ├── topology/         # 🌀 Ternary Coding & H7 Seeds
+│   ├── gui.py            # 🧪 Desktop Dashboard (Streamlit)
+│   └── mobile_gui.py     # 📱 Mobile Metriplectic Console (Flet)
+├── tests/                # 🧪 Physics & Security Test Suite
+└── README.md             # 📜 This documentation
 ```
 
 ---
@@ -129,15 +139,15 @@ bimotype-ternary/
 Mantenemos un rigor físico y matemático absoluto. Todos los cambios en la capa P2P y Seguridad deben superar los tests de inyección y autorización:
 
 ```bash
-pytest tests/test_p2p.py
+pytest tests/
 ```
 
 ---
 
 ## 📄 License & Credits
 
-- **Autor**: Jacobo Tlacaelel Mina Rodriguez
-- **Principios**: Marco de la Analogía Rigurosa (TLACA)
-- **Licencia**: MIT
+- **Author**: Jacobo Tlacaelel Mina Rodriguez
+- **Principles**: Marco de la Analogía Rigurosa (TLACA)
+- **License**: MIT
 
 *Built for a rigorous and secure quantum future.*
